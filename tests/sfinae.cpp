@@ -48,6 +48,74 @@ using Vc::mask;
 using all_valid_scalars = expand_list<Typelist<Template<datapar, Vc::datapar_abi::scalar>,
                                                Template<mask, Vc::datapar_abi::scalar>>,
                                       testtypes>;
+
+using all_valid_fixed_size =
+    expand_list<Typelist<Template<datapar, Vc::datapar_abi::fixed_size<1>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<2>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<3>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<4>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<5>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<6>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<7>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<8>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<9>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<10>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<11>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<12>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<13>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<14>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<15>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<16>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<17>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<18>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<19>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<20>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<21>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<22>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<23>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<24>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<25>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<26>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<27>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<28>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<29>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<30>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<31>>,
+                         Template<datapar, Vc::datapar_abi::fixed_size<32>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<1>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<2>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<3>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<4>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<5>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<6>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<7>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<8>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<9>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<10>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<11>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<12>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<13>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<14>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<15>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<16>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<17>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<18>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<19>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<20>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<21>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<22>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<23>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<24>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<25>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<26>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<27>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<28>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<29>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<30>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<31>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<32>>>,
+                testtypes>;
+
 using all_valid_simd = concat<
 #if defined Vc_HAVE_FULL_SSE_ABI
     expand_list<Typelist<Template<datapar, Vc::datapar_abi::sse>,
@@ -83,7 +151,7 @@ using all_valid_simd = concat<
 #endif
     Typelist<>>;
 
-TEST_TYPES(V, is_usable, concat<all_valid_scalars, all_valid_simd>)
+TEST_TYPES(V, is_usable, concat<all_valid_scalars, all_valid_simd, all_valid_fixed_size>)
 {
     VERIFY(std::is_destructible<V>::value);
     VERIFY(std::is_copy_constructible<V>::value);
@@ -110,6 +178,11 @@ using unusable_abis = Typelist<
     Template<datapar, Vc::datapar_abi::neon>, Template<mask, Vc::datapar_abi::neon>,
 #endif
     Template<datapar, int>, Template<mask, int>>;
+
+using unusable_fixed_size =
+    expand_list<Typelist<Template<datapar, Vc::datapar_abi::fixed_size<33>>,
+                         Template<mask, Vc::datapar_abi::fixed_size<33>>>,
+                testtypes>;
 
 using unusable_simd_types =
     concat<expand_list<Typelist<Template<datapar, Vc::datapar_abi::sse>,
@@ -144,6 +217,7 @@ using unusable_simd_types =
 
 TEST_TYPES(V, is_unusable,
            concat<expand_list<unusable_abis, testtypes_wo_ldouble>, unusable_simd_types,
+                  unusable_fixed_size,
                   expand_list<Typelist<Template1<dummy_datapar>, Template1<dummy_mask>,
                                        Template1<bool_datapar>, Template1<bool_mask>>,
                               all_native_abis>>)
