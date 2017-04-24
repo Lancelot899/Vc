@@ -65,8 +65,21 @@ template <class T> struct sse_traits {
     using mask_member_type = sse_mask_member_type<T>;
     using mask_impl_type = sse_mask_impl;
     static constexpr size_t mask_member_alignment = alignof(mask_member_type);
-    using mask_cast_type = typename mask_member_type::VectorType;
-    struct mask_base {};
+    class mask_cast_type
+    {
+        using U = typename mask_member_type::VectorType;
+        U d;
+
+    public:
+        mask_cast_type(U x) : d(x) {}
+        operator mask_member_type() const { return d; }
+    };
+    struct mask_base {
+        explicit operator typename mask_member_type::VectorType() const
+        {
+            return data(*static_cast<const mask<T, datapar_abi::sse> *>(this));
+        }
+    };
 };
 
 #ifdef Vc_HAVE_SSE_ABI
@@ -1051,8 +1064,6 @@ struct sse_compare_base {
 protected:
     template <class T> using V = Vc::datapar<T, Vc::datapar_abi::sse>;
     template <class T> using M = Vc::mask<T, Vc::datapar_abi::sse>;
-    template <class T>
-    using S = typename Vc::detail::traits<T, Vc::datapar_abi::sse>::mask_cast_type;
 };
 
 // }}}1
@@ -1216,22 +1227,19 @@ template <class T> Vc_ALWAYS_INLINE bool Vc_VDECL some_of(mask<T, datapar_abi::s
 
 template <class T> Vc_ALWAYS_INLINE int Vc_VDECL popcount(mask<T, datapar_abi::sse> k)
 {
-    const auto d =
-        static_cast<typename detail::traits<T, datapar_abi::sse>::mask_cast_type>(k);
+    const auto d = detail::data(k);
     return detail::mask_count<k.size()>(d);
 }
 
 template <class T> Vc_ALWAYS_INLINE int Vc_VDECL find_first_set(mask<T, datapar_abi::sse> k)
 {
-    const auto d =
-        static_cast<typename detail::traits<T, datapar_abi::sse>::mask_cast_type>(k);
+    const auto d = detail::data(k);
     return detail::firstbit(detail::mask_to_int<k.size()>(d));
 }
 
 template <class T> Vc_ALWAYS_INLINE int Vc_VDECL find_last_set(mask<T, datapar_abi::sse> k)
 {
-    const auto d =
-        static_cast<typename detail::traits<T, datapar_abi::sse>::mask_cast_type>(k);
+    const auto d = detail::data(k);
     return detail::lastbit(detail::mask_to_int<k.size()>(d));
 }
 
@@ -1247,8 +1255,8 @@ struct equal_to<Vc::mask<T, Vc::datapar_abi::sse>>
 public:
     bool operator()(const M<T> &x, const M<T> &y) const noexcept
     {
-        return Vc::detail::is_equal<M<T>::size()>(static_cast<S<T>>(x),
-                                                  static_cast<S<T>>(y));
+        return Vc::detail::is_equal<M<T>::size()>(Vc::detail::data(x),
+                                                  Vc::detail::data(y));
     }
 };
 // }}}1
