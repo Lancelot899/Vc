@@ -352,14 +352,14 @@ public:
     static inline datapar<T> min(const datapar<T> &a, const datapar<T> &b)
     {
         return {private_init,
-                apply([](auto aa, auto bb) { return std::min(aa, bb); }, a.d, b.d)};
+                apply([](auto aa, auto bb) { return Vc::min(aa, bb); }, a.d, b.d)};
     }
 
     template <class T>
     static inline datapar<T> max(const datapar<T> &a, const datapar<T> &b)
     {
         return {private_init,
-                apply([](auto aa, auto bb) { return std::max(aa, bb); }, a.d, b.d)};
+                apply([](auto aa, auto bb) { return Vc::max(aa, bb); }, a.d, b.d)};
     }
 
     // complement {{{2
