@@ -464,7 +464,7 @@ public:
     template <class V> static inline typename V::mask_type cmp_(const V &x, const V &y)  \
     {                                                                                    \
         mask_member_type bits = 0;                                                       \
-        for_each(x.d, y.d, [&bits](auto native_x, auto native_y, auto offset) {          \
+        detail::for_each(x.d, y.d, [&bits](auto native_x, auto native_y, auto offset) {  \
             bits |= mask_member_type(                                                    \
                         std::cmp_<>()(native_x, native_y).to_bitset().to_ullong())       \
                     << offset;                                                           \
